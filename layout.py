@@ -23,6 +23,7 @@ def create_layout(human_players: List[str], bank: str, game: Dict):
 
     player_selects.append({'label': 'ALL'})
     actual_players_selects = [{'label': player} for player in human_players + [bank]]
+    human_players_selects = [{'label': player} for player in human_players]
 
     pay_receive_tab = dbc.Card(dbc.CardBody(dbc.Form([
         dbc.FormGroup([
@@ -37,7 +38,7 @@ def create_layout(human_players: List[str], bank: str, game: Dict):
             dbc.Label('Amount', html_for='amount-pay'),
             dbc.Input(id='pay-amount', type='numeric')
         ]),
-        dbc.Button('Pay', id='pay-button')
+        dbc.Button('Pay', id='pay-button', color="danger", className="mr-1")
     ])))
 
     property_dealing_tab = dbc.Card(dbc.CardBody(dbc.Form([
@@ -57,9 +58,33 @@ def create_layout(human_players: List[str], bank: str, game: Dict):
             dbc.Label('Price', html_for='trade-price'),
             dbc.Input(id='trade-price', type='numeric')
         ]),
-        dbc.Button('Trade', id='trade-button'),
+        dbc.Button('Trade', id='trade-button', color="success", className="mr-1"),
     ])))
 
+    extra_tab = dbc.Card(dbc.CardBody(dbc.Form([
+        dbc.FormGroup([
+            dbc.Label('Player', html_for='extra-player'),
+            dbc.Select(id='extra-player', options=human_players_selects)
+        ]),
+        dbc.Button('Go', id='go-button', color="success", className="mr-1"),
+        dbc.Button('Income Tax', id='income-tax-button', color="dark", className="mr-1"),
+        dbc.Button('Super tax', id='super-tax-button', color="secondary", className="mr-1"),
+        dbc.Button('Out of Jail', id='out-of-jail-button', color="danger", className="mr-1"),
+    ])))
+
+    mortgage_tab = dbc.Card(dbc.CardBody(dbc.Form([
+        dbc.FormGroup([
+            dbc.Label('Player', html_for='mortgage-player'),
+            dbc.Select(id='mortgage-player', options=human_players_selects)
+        ]),
+        dbc.FormGroup([
+            dbc.Label('Property', html_for='mortgage-property'),
+            dbc.Select(id='mortgage-property', options=EMPTY_SELECT)
+        ]),
+        dbc.Button('Mortgage', id='mortgage-button', color="danger", className="mr-1"),
+        dbc.Button('Unmortgage', id='unmortgage-button', color="success", className="mr-1"),
+    ])))
+    
     navbar = dbc.NavbarSimple(
         brand="Monopoly",
         brand_href="#",
@@ -74,6 +99,8 @@ def create_layout(human_players: List[str], bank: str, game: Dict):
             dbc.Tabs([
                 dbc.Tab(pay_receive_tab, label="Money"),
                 dbc.Tab(property_dealing_tab, label="Trading"),
+                dbc.Tab(extra_tab, label="Extra"),
+                dbc.Tab(mortgage_tab, label="Mortgage"),    
             ])
         )),
         html.Br(),

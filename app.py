@@ -21,7 +21,7 @@ def main():
     app.title = 'Monopoly'
     app.layout = create_layout(human_players, bank, game)
     register_callbacks(app, property_definitions, human_players, bank)
-    update_callbacks(app)
+    update_callbacks(app, bank)
 
     app.run_server(host='192.168.0.48')
 

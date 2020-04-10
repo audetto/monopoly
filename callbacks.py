@@ -44,12 +44,12 @@ def register_callbacks(app, definitions: pd.DataFrame, human_players: List[str],
             Output('trade-price', 'value'),
         ],
         [
-            Input('trade-seller', 'value'),
             Input('game-state', 'data'),
+            Input('trade-seller', 'value'),
             Input('trade-property', 'value'),
         ]
     )
-    def update_trade_property_price(seller: str, data: str, prop: str):
+    def update_trade_property_price(data: str, seller: str, prop: str):
         if not seller or not data:
             raise PreventUpdate
 
@@ -65,3 +65,21 @@ def register_callbacks(app, definitions: pd.DataFrame, human_players: List[str],
             price = ''
 
         return options, price
+
+    @app.callback(
+        Output('mortgage-property', 'options'),
+        [
+            Input('game-state', 'data'),
+            Input('mortgage-player', 'value'),
+        ]
+    )
+    def update_trade_property_price(data: str, player: str):
+        if not player or not data:
+            raise PreventUpdate
+
+        game = json.loads(data)
+
+        properties = game[player]['properties']
+        options = [{'label': p} for p in properties]
+
+        return options
