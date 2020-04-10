@@ -7,17 +7,17 @@ from dash.exceptions import PreventUpdate
 
 
 def pay(game: Dict,
-        pay_player: str, receive_player: str, pay_amount: int):
+        pay_player: str, receive_player: str, pay_amount: str):
 
-    if pay_player != receive_player:
+    if pay_player != receive_player and pay_amount:
         game[pay_player]['money'] -= float(pay_amount)
         game[receive_player]['money'] += float(pay_amount)
 
 
 def trade(game: Dict,
-          trade_seller: str, trade_buyer: str, trade_property: str, trade_price: int):
+          trade_seller: str, trade_buyer: str, trade_property: str, trade_price: str):
 
-    if trade_seller != trade_buyer:
+    if trade_seller != trade_buyer and trade_price:
         seller_properties = game[trade_seller]['properties']
         if trade_property in seller_properties:
             game[trade_seller]['money'] += float(trade_price)
@@ -50,8 +50,8 @@ def update_callbacks(app):
     def update_game(
             pay_n_clicks: int, trade_n_clicks: int,
             data: str,
-            pay_player: str, receive_player: str, pay_amount: int,
-            trade_seller: str, trade_buyer: str, trade_property: str, trade_price: int
+            pay_player: str, receive_player: str, pay_amount: str,
+            trade_seller: str, trade_buyer: str, trade_property: str, trade_price: str
                     ):
         if not data:
             raise PreventUpdate

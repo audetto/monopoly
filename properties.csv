@@ -1,0 +1,29 @@
+Name,Color,Price,Rent,1 house,2 house,3 house,4 house,hotel,Rule
+Old Kent Road,Brown,60,2,10,30,90,160,250,Normal
+White Chapel,Brown,60,4,20,60,180,320,450,Normal
+"The Angel, Islington",Light Blue,100,6,30,90,270,400,550,Normal
+Euston,Light Blue,100,6,30,90,270,400,550,Normal
+Pentonville,Light Blue,120,8,40,100,300,450,600,Normal
+Pall Mall,Pink,140,10,50,150,450,625,750,Normal
+Whitehall,Pink,140,10,50,150,450,625,750,Normal
+Northumberland Avenue,Pink,160,12,60,180,500,700,900,Normal
+Bow Street,Orange,180,14,70,200,550,750,950,Normal
+Marlborough Street,Orange,180,14,70,200,550,750,950,Normal
+Vine street,Orange,200,16,80,220,600,800,1000,Normal
+Strand,Red,220,18,90,250,700,875,1050,Normal
+Fleet Street,Red,220,18,90,250,700,875,1050,Normal
+Trafalgar Square,Red,240,20,100,300,750,925,1100,Normal
+Leicester Square,Yellow,260,22,110,330,800,975,1150,Normal
+Coventry Street,Yellow,260,22,110,330,800,975,1150,Normal
+Piccadilly,Yellow,280,24,120,360,850,1025,1200,Normal
+Regent Street,Green,300,26,130,390,900,1100,1275,Normal
+Oxford Street,Green,300,26,130,390,900,1100,1275,Normal
+Bond Street,Green,320,28,150,450,1000,1200,1400,Normal
+Park Lane,Dark Blue,350,35,175,500,1100,1300,1500,Normal
+Mayfair,Dark Blue,400,50,200,600,1400,1700,2000,Normal
+Electric Company,White,150,,,,,,,Utility
+Water Works,White,150,,,,,,,Utility
+King’s Cross Station,Grey,200,,,,,,,Station
+Marylebone Station,Grey,200,,,,,,,Station
+Fenchurch St. Station,Grey,200,,,,,,,Station
+Liverpool St. Station,Grey,200,,,,,,,Station

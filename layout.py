@@ -70,14 +70,14 @@ def create_layout(human_players: List[str], bank: str, game: Dict):
     game_layout = dbc.Container([
         dbc.Row(navbar),
         html.Br(),
-        dbc.Row(player_columns),
-        html.Br(),
         dbc.Row(dbc.Col(
             dbc.Tabs([
                 dbc.Tab(pay_receive_tab, label="Money"),
                 dbc.Tab(property_dealing_tab, label="Trading"),
             ])
-        ))
+        )),
+        html.Br(),
+        dbc.Row(player_columns),
     ])
 
     store = dcc.Store(id='game-state', data=json.dumps(game))
