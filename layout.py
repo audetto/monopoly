@@ -14,7 +14,7 @@ def create_layout(human_players: List[str], bank: str, game: Dict):
     for player in human_players + [bank]:
         color = 'danger' if player == bank else 'primary'
         label = dbc.Alert(player, color=color)
-        money = dbc.Input(id=f'{player}-money', type='numeric', disabled=True)
+        money = dbc.Input(id=f'{player}-money', type='number', disabled=True)
         properties = dbc.Table(id=f'{player}-properties')
         col = dbc.Col([label, money, html.Br(), properties])
         player_columns.append(col)
@@ -26,16 +26,16 @@ def create_layout(human_players: List[str], bank: str, game: Dict):
 
     pay_receive_tab = dbc.Card(dbc.CardBody(dbc.Form([
         dbc.FormGroup([
-            dbc.Label('Pay', html_for='pay-player'),
+            dbc.Label('From', html_for='pay-player'),
             dbc.Col(dbc.Select(id='pay-player', options=player_selects))
         ], row=True),
         dbc.FormGroup([
-            dbc.Label('Receive', html_for='receive-player'),
+            dbc.Label('To', html_for='receive-player'),
             dbc.Col(dbc.Select(id='receive-player', options=player_selects))
         ], row=True),
         dbc.FormGroup([
             dbc.Label('Amount', html_for='amount-pay'),
-            dbc.Col(dbc.Input(id='pay-amount', type='numeric'))
+            dbc.Col(dbc.Input(id='pay-amount', type='number'))
         ], row=True),
         dbc.Button('Pay', id='pay-button', color="danger", className="mr-1")
     ])))
@@ -55,7 +55,7 @@ def create_layout(human_players: List[str], bank: str, game: Dict):
         ], row=True),
         dbc.FormGroup([
             dbc.Label('Price', html_for='trade-price'),
-            dbc.Col(dbc.Input(id='trade-price', type='numeric'))
+            dbc.Col(dbc.Input(id='trade-price', type='number'))
         ], row=True),
         dbc.Button('Trade', id='trade-button', color="success", className="mr-1"),
     ])))
@@ -84,17 +84,10 @@ def create_layout(human_players: List[str], bank: str, game: Dict):
         dbc.Button('Unmortgage', id='unmortgage-button', color="success", className="mr-1"),
     ])))
 
-    navbar = dbc.NavbarSimple(
-        brand="Monopoly",
-        brand_href="#",
-        color="primary",
-        dark=True,
-    )
-
     game_layout = dbc.Container([
         html.Br(),
         dbc.Row([
-            dbc.Col(navbar, width=1),
+            dbc.Col(dbc.Alert('Monopoly'), width=1),
             dbc.Col([
                 dbc.Row(dbc.Col(dbc.Tabs([
                     dbc.Tab(pay_receive_tab, label="Money"),

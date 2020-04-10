@@ -7,10 +7,10 @@ from dash.exceptions import PreventUpdate
 
 
 def pay(game: Dict,
-        pay_player: str, receive_player: str, pay_amount: str):
+        pay_player: str, receive_player: str, pay_amount: int):
     if pay_player != receive_player and pay_amount:
-        game[pay_player]['money'] -= float(pay_amount)
-        game[receive_player]['money'] += float(pay_amount)
+        game[pay_player]['money'] -= pay_amount
+        game[receive_player]['money'] += pay_amount
 
 
 def go(game: Dict, bank: str,
@@ -42,14 +42,14 @@ def out_of_jail(game: Dict, bank: str,
 
 
 def trade(game: Dict,
-          trade_seller: str, trade_buyer: str, trade_property: str, trade_price: str):
+          trade_seller: str, trade_buyer: str, trade_property: str, trade_price: int):
     if trade_seller != trade_buyer and trade_price:
         seller_properties = game[trade_seller]['properties']
         if trade_property in seller_properties:
-            game[trade_seller]['money'] += float(trade_price)
+            game[trade_seller]['money'] += trade_price
             game[trade_buyer]['properties'][trade_property] = game[trade_seller]['properties'][trade_property]
             del game[trade_seller]['properties'][trade_property]
-            game[trade_buyer]['money'] -= float(trade_price)
+            game[trade_buyer]['money'] -= trade_price
 
 
 def mortgage(game: Dict, definitions: Dict, bank: str,

@@ -25,7 +25,7 @@ def main():
     register_callbacks(app, property_definitions, human_players, bank)
     update_callbacks(app, property_definitions, bank)
 
-    app.run_server()
+    app.run_server(host='0.0.0.0')
 
 
 if __name__ == "__main__":
