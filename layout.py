@@ -92,19 +92,21 @@ def create_layout(human_players: List[str], bank: str, game: Dict):
     )
 
     game_layout = dbc.Container([
-        dbc.Row(navbar),
         html.Br(),
-        dbc.Row(dbc.Col(
-            dbc.Tabs([
-                dbc.Tab(pay_receive_tab, label="Money"),
-                dbc.Tab(property_dealing_tab, label="Trading"),
-                dbc.Tab(extra_tab, label="Extra"),
-                dbc.Tab(mortgage_tab, label="Mortgage"),
-            ])
-        )),
-        html.Br(),
-        dbc.Row(player_columns),
-    ])
+        dbc.Row([
+            dbc.Col(navbar, width=1),
+            dbc.Col([
+                dbc.Row(dbc.Col(dbc.Tabs([
+                    dbc.Tab(pay_receive_tab, label="Money"),
+                    dbc.Tab(property_dealing_tab, label="Trading"),
+                    dbc.Tab(extra_tab, label="Extra"),
+                    dbc.Tab(mortgage_tab, label="Mortgage"),
+                ]))),
+                html.Br(),
+                dbc.Row(player_columns),
+            ], width=10)
+        ])
+    ], fluid=True)
 
     store = dcc.Store(id='game-state', data=json.dumps(game))
 

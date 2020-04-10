@@ -13,29 +13,29 @@ def pay(game: Dict,
         game[receive_player]['money'] += float(pay_amount)
 
 
-def go(game: Dict,
-       extra_player: str, bank: str):
+def go(game: Dict, bank: str,
+       extra_player: str):
     if extra_player:
         game[extra_player]['money'] += 200
         game[bank]['money'] -= 200
 
 
-def income_tax(game: Dict,
-               extra_player: str, bank: str):
+def income_tax(game: Dict, bank: str,
+               extra_player: str):
     if extra_player:
         game[extra_player]['money'] -= 200
         game[bank]['money'] += 200
 
 
-def super_tax(game: Dict,
-              extra_player: str, bank: str):
+def super_tax(game: Dict, bank: str,
+              extra_player: str):
     if extra_player:
         game[extra_player]['money'] -= 100
         game[bank]['money'] += 100
 
 
-def out_of_jail(game: Dict,
-                extra_player: str, bank: str):
+def out_of_jail(game: Dict, bank: str,
+                extra_player: str):
     if extra_player:
         game[extra_player]['money'] -= 50
         game[bank]['money'] += 50
@@ -47,12 +47,36 @@ def trade(game: Dict,
         seller_properties = game[trade_seller]['properties']
         if trade_property in seller_properties:
             game[trade_seller]['money'] += float(trade_price)
-            game[trade_seller]['properties'] = [prop for prop in seller_properties if prop != trade_property]
+            game[trade_buyer]['properties'][trade_property] = game[trade_seller]['properties'][trade_property]
+            del game[trade_seller]['properties'][trade_property]
             game[trade_buyer]['money'] -= float(trade_price)
-            game[trade_buyer]['properties'].append(trade_property)
 
 
-def update_callbacks(app, bank: str):
+def mortgage(game: Dict, definitions: Dict, bank: str,
+             mortgage_player: str, mortgage_property: str):
+    if mortgage_player and mortgage_property:
+        player_data = game[mortgage_player]
+        if not player_data['properties'][mortgage_property]['mortgage']:
+            definition = definitions[mortgage_property]
+            price = definition['price'] / 2
+            player_data['properties'][mortgage_property]['mortgage'] = True
+            player_data['money'] += price
+            game[bank]['money'] -= price
+
+
+def unmortgage(game: Dict, definitions: Dict, bank: str,
+               mortgage_player: str, mortgage_property: str):
+    if mortgage_player and mortgage_property:
+        player_data = game[mortgage_player]
+        if player_data['properties'][mortgage_property]['mortgage']:
+            definition = definitions[mortgage_property]
+            price = definition['price'] * 11 / 20
+            player_data['properties'][mortgage_property]['mortgage'] = False
+            player_data['money'] -= price
+            game[bank]['money'] += price
+
+
+def update_callbacks(app, definitions: Dict, bank: str):
     @app.callback(
         Output('game-state', 'data'),
         [
@@ -62,6 +86,8 @@ def update_callbacks(app, bank: str):
             Input('income-tax-button', 'n_clicks'),
             Input('super-tax-button', 'n_clicks'),
             Input('out-of-jail-button', 'n_clicks'),
+            Input('mortgage-button', 'n_clicks'),
+            Input('unmortgage-button', 'n_clicks'),
         ],
         [
             State('game-state', 'data'),
@@ -83,7 +109,7 @@ def update_callbacks(app, bank: str):
     )
     def update_game(
             pay_n_clicks: int, trade_n_clicks: int, go_n_clicks: int, income_tax_n_clicks: int,
-            super_tax_n_clicks: int, out_of_jail_n_clicks: int,
+            super_tax_n_clicks: int, out_of_jail_n_clicks: int, mortgage_n_clicks: int, unmortgage_n_clicks: int,
             data: str,
             pay_player: str, receive_player: str, pay_amount: str,
             trade_seller: str, trade_buyer: str, trade_property: str, trade_price: str,
@@ -102,12 +128,16 @@ def update_callbacks(app, bank: str):
         elif 'trade-button.n_clicks' in triggers and trade_n_clicks:
             trade(game, trade_seller, trade_buyer, trade_property, trade_price)
         elif 'go-button.n_clicks' in triggers and go_n_clicks:
-            go(game, extra_player, bank)
+            go(game, bank, extra_player)
         elif 'income-tax-button.n_clicks' in triggers and income_tax_n_clicks:
-            income_tax(game, extra_player, bank)
+            income_tax(game, bank, extra_player)
         elif 'super-tax-button.n_clicks' in triggers and super_tax_n_clicks:
-            super_tax(game, extra_player, bank)
+            super_tax(game, bank, extra_player)
         elif 'out-of-jail-button.n_clicks' in triggers and out_of_jail_n_clicks:
-            out_of_jail(game, extra_player, bank)
+            out_of_jail(game, bank, extra_player)
+        elif 'mortgage-button.n_clicks' in triggers and mortgage_n_clicks:
+            mortgage(game, definitions, bank, mortgage_player, mortgage_property)
+        elif 'unmortgage-button.n_clicks' in triggers and unmortgage_n_clicks:
+            unmortgage(game, definitions, bank, mortgage_player, mortgage_property)
 
         return json.dumps(game)

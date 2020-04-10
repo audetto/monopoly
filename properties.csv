@@ -1,4 +1,4 @@
-Name,Color,Price,Rent,1 house,2 house,3 house,4 house,hotel,Rule
+name,color,price,rent,1 house,2 house,3 house,4 house,hotel,rule
 Old Kent Road,Brown,60,2,10,30,90,160,250,Normal
 White Chapel,Brown,60,4,20,60,180,320,450,Normal
 "The Angel, Islington",Light Blue,100,6,30,90,270,400,550,Normal
