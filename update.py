@@ -1,5 +1,5 @@
 import json
-from typing import List, Dict
+from typing import Dict
 
 import dash
 from dash.dependencies import Output, Input, State
@@ -8,7 +8,6 @@ from dash.exceptions import PreventUpdate
 
 def pay(game: Dict,
         pay_player: str, receive_player: str, pay_amount: str):
-
     if pay_player != receive_player and pay_amount:
         game[pay_player]['money'] -= float(pay_amount)
         game[receive_player]['money'] += float(pay_amount)
@@ -16,7 +15,6 @@ def pay(game: Dict,
 
 def go(game: Dict,
        extra_player: str, bank: str):
-
     if extra_player:
         game[extra_player]['money'] += 200
         game[bank]['money'] -= 200
@@ -24,7 +22,6 @@ def go(game: Dict,
 
 def income_tax(game: Dict,
                extra_player: str, bank: str):
-
     if extra_player:
         game[extra_player]['money'] -= 200
         game[bank]['money'] += 200
@@ -32,7 +29,6 @@ def income_tax(game: Dict,
 
 def super_tax(game: Dict,
               extra_player: str, bank: str):
-
     if extra_player:
         game[extra_player]['money'] -= 100
         game[bank]['money'] += 100
@@ -40,7 +36,6 @@ def super_tax(game: Dict,
 
 def out_of_jail(game: Dict,
                 extra_player: str, bank: str):
-
     if extra_player:
         game[extra_player]['money'] -= 50
         game[bank]['money'] += 50
@@ -48,7 +43,6 @@ def out_of_jail(game: Dict,
 
 def trade(game: Dict,
           trade_seller: str, trade_buyer: str, trade_property: str, trade_price: str):
-
     if trade_seller != trade_buyer and trade_price:
         seller_properties = game[trade_seller]['properties']
         if trade_property in seller_properties:
@@ -59,7 +53,6 @@ def trade(game: Dict,
 
 
 def update_callbacks(app, bank: str):
-
     @app.callback(
         Output('game-state', 'data'),
         [
@@ -81,9 +74,9 @@ def update_callbacks(app, bank: str):
             State('trade-buyer', 'value'),
             State('trade-property', 'value'),
             State('trade-price', 'value'),
-            
+
             State('extra-player', 'value'),
-            
+
             State('mortgage-player', 'value'),
             State('mortgage-property', 'value'),
         ]
@@ -96,7 +89,7 @@ def update_callbacks(app, bank: str):
             trade_seller: str, trade_buyer: str, trade_property: str, trade_price: str,
             extra_player: str,
             mortgage_player: str, mortgage_property: str,
-                    ):
+    ):
         if not data:
             raise PreventUpdate
 

@@ -1,15 +1,14 @@
 import json
 from typing import List
 
-import pandas as pd
-from dash.dependencies import Input, Output, State
 import dash_bootstrap_components as dbc
 import dash_html_components as html
+import pandas as pd
+from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
 
 
 def register_callbacks(app, definitions: pd.DataFrame, human_players: List[str], bank: str):
-
     all_players = human_players + [bank]
     outputs = []
     for player in all_players:

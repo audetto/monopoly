@@ -2,9 +2,8 @@ import json
 from typing import List, Dict
 
 import dash_bootstrap_components as dbc
-import dash_html_components as html
 import dash_core_components as dcc
-
+import dash_html_components as html
 
 EMPTY_SELECT = [{'label': 'empty'}]
 
@@ -84,7 +83,7 @@ def create_layout(human_players: List[str], bank: str, game: Dict):
         dbc.Button('Mortgage', id='mortgage-button', color="danger", className="mr-1"),
         dbc.Button('Unmortgage', id='unmortgage-button', color="success", className="mr-1"),
     ])))
-    
+
     navbar = dbc.NavbarSimple(
         brand="Monopoly",
         brand_href="#",
@@ -100,7 +99,7 @@ def create_layout(human_players: List[str], bank: str, game: Dict):
                 dbc.Tab(pay_receive_tab, label="Money"),
                 dbc.Tab(property_dealing_tab, label="Trading"),
                 dbc.Tab(extra_tab, label="Extra"),
-                dbc.Tab(mortgage_tab, label="Mortgage"),    
+                dbc.Tab(mortgage_tab, label="Mortgage"),
             ])
         )),
         html.Br(),
