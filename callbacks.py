@@ -2,23 +2,23 @@ from typing import List, Dict
 
 import dash_bootstrap_components as dbc
 import dash_html_components as html
+import plotly.graph_objs as go
 from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
-import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 
 from game import Game
 from layout import EMPTY_SELECT
-from properties import get_color_style, get_tradable_properties, get_property_value, get_sorted_properties
+from properties import Properties
 
 
-def get_options_for_player_tradable_properties(properties: Dict, definitions: Dict) -> List[Dict]:
-    sorted_props = get_sorted_properties(properties, definitions)
+def get_options_for_player_properties(properties: Dict, definitions: Properties) -> List[Dict]:
+    sorted_props = definitions.get_sorted_properties(properties)
     options = EMPTY_SELECT + [{'label': p} for p in sorted_props]
     return options
 
 
-def register_callbacks(app, definitions: Dict, human_players: List[str], bank: str):
+def register_callbacks(app, definitions: Properties, human_players: List[str], bank: str):
     all_players = human_players + [bank]
     outputs = []
     for player in all_players:
@@ -60,11 +60,12 @@ def register_callbacks(app, definitions: Dict, human_players: List[str], bank: s
                 fig.add_trace(go.Scatter(y=ts, mode='markers+lines', name=player))
 
             player_properties = player_data['properties']
-            sorted_props = get_sorted_properties(player_properties, definitions)
+            sorted_props = definitions.get_sorted_properties(player_properties)
 
-            rows = [html.Tr(html.Td(
-                prop,
-                style=get_color_style(definitions[prop], player_properties[prop]))) for prop in sorted_props]
+            rows = [html.Tr([
+                html.Td(prop),
+                html.Td(player_properties[prop]['houses']),
+            ], style=definitions.get_color_style(prop, player_properties)) for prop in sorted_props]
             table = dbc.Table(html.Tbody(rows), size='sm')
             results.append(table)
 
@@ -97,11 +98,11 @@ def register_callbacks(app, definitions: Dict, human_players: List[str], bank: s
         game = game_state.get_current_game()
 
         player_data = game[seller]
-        tradable_properties = get_tradable_properties(player_data)
-        options = get_options_for_player_tradable_properties(tradable_properties, definitions)
+        tradable_properties = definitions.get_tradable_properties(player_data)
+        options = get_options_for_player_properties(tradable_properties, definitions)
 
         if prop in tradable_properties:
-            price = get_property_value(prop, player_data, definitions)
+            price = definitions.get_property_value(prop, player_data)
         else:
             price = ''
 
@@ -127,8 +128,8 @@ def register_callbacks(app, definitions: Dict, human_players: List[str], bank: s
         game = game_state.get_current_game()
 
         player_data = game[player]
-        tradable_properties = get_tradable_properties(player_data)
-        options = get_options_for_player_tradable_properties(tradable_properties, definitions)
+        tradable_properties = definitions.get_tradable_properties(player_data)
+        options = get_options_for_player_properties(tradable_properties, definitions)
 
         if prop and prop in tradable_properties:
             mortgage = tradable_properties[prop]['mortgage']
@@ -138,3 +139,36 @@ def register_callbacks(app, definitions: Dict, human_players: List[str], bank: s
             unmortgage = False
 
         return options, mortgage, unmortgage
+
+    @app.callback(
+        [
+            Output('houses-property', 'options'),
+            Output('buy-house-button', 'disabled'),
+            Output('sell-house-button', 'disabled'),
+        ],
+        [
+            Input('game-state', 'data'),
+            Input('houses-player', 'value'),
+            Input('houses-property', 'value'),
+        ]
+    )
+    def update_houses_property(data: str, player: str, prop: str):
+        if not player or not data:
+            raise PreventUpdate
+
+        game_state = Game.from_json(data)
+        game = game_state.get_current_game()
+
+        player_data = game[player]
+        buildable_properties = definitions.get_buildable_properties(player_data)
+        options = get_options_for_player_properties(buildable_properties, definitions)
+
+        if prop and prop in buildable_properties:
+            houses = buildable_properties[prop]['houses']
+            buy = houses == 5
+            sell = houses == 0
+        else:
+            buy = False
+            sell = False
+
+        return options, buy, sell

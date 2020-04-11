@@ -86,6 +86,19 @@ def create_layout(human_players: List[str], bank: str, game_state: Game):
         dbc.Button('Unmortgage', id='unmortgage-button', color="success", className="mr-1"),
     ])))
 
+    buildings_tab = dbc.Card(dbc.CardBody(dbc.Form([
+        dbc.FormGroup([
+            dbc.Label('Player', html_for='houses-player'),
+            dbc.Col(dbc.Select(id='houses-player', options=human_players_selects))
+        ], row=True),
+        dbc.FormGroup([
+            dbc.Label('Property', html_for='houses-property'),
+            dbc.Col(dbc.Select(id='houses-property', options=EMPTY_SELECT))
+        ], row=True),
+        dbc.Button('Buy house', id='buy-house-button', color="success", className="mr-1"),
+        dbc.Button('Sell house', id='sell-house-button', color="danger", className="mr-1"),
+    ])))
+
     charts_tab = dbc.Card(dbc.CardBody(
         dcc.Graph(id='history-charts')
     ))
@@ -113,6 +126,7 @@ def create_layout(human_players: List[str], bank: str, game_state: Game):
                     dbc.Tab(property_dealing_tab, label="Trading"),
                     dbc.Tab(extra_tab, label="Extra"),
                     dbc.Tab(mortgage_tab, label="Mortgage"),
+                    dbc.Tab(buildings_tab, label="Buildings"),
                 ]))),
                 html.Br(),
                 dbc.Row(player_columns),

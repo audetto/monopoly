@@ -6,7 +6,7 @@ from dash.dependencies import Output, Input, State
 from dash.exceptions import PreventUpdate
 
 from game import Game
-from properties import get_redemption_cost, get_mortgage_value
+from properties import Properties
 
 
 def pay(game: Dict, human_players: List[str],
@@ -70,31 +70,55 @@ def trade(game: Dict,
             return f'{trade_seller} sells {trade_property} to {trade_buyer} for {trade_price}M$'
 
 
-def mortgage(game: Dict, definitions: Dict, bank: str,
+def mortgage(game: Dict, definitions: Properties, bank: str,
              mortgage_player: str, mortgage_property: str):
     if mortgage_player and mortgage_property:
         player_data = game[mortgage_player]
         if not player_data['properties'][mortgage_property]['mortgage']:
-            price = get_mortgage_value(mortgage_property, definitions)
+            price = definitions.get_mortgage_value(mortgage_property)
             player_data['properties'][mortgage_property]['mortgage'] = True
             player_data['money'] += price
             game[bank]['money'] -= price
             return f'{mortgage_player} mortgages {mortgage_property} for {price}M$'
 
 
-def unmortgage(game: Dict, definitions: Dict, bank: str,
+def buy_house(game: Dict, definitions: Properties, bank: str,
+              houses_player: str, houses_property: str):
+    if houses_player and houses_property:
+        player_data = game[houses_player]
+        if player_data['properties'][houses_property]['houses'] < 5:
+            price = definitions.get_house_price(houses_property)
+            player_data['properties'][houses_property]['houses'] += 1
+            player_data['money'] -= price
+            game[bank]['money'] += price
+            return f'{houses_player} buys a house on {houses_property} for {price}M$'
+
+
+def sell_house(game: Dict, definitions: Properties, bank: str,
+               houses_player: str, houses_property: str):
+    if houses_player and houses_property:
+        player_data = game[houses_player]
+        if player_data['properties'][houses_property]['houses'] > 0:
+            price = definitions.get_house_price(houses_property) // 2
+            player_data['properties'][houses_property]['houses'] -= 1
+            player_data['money'] += price
+            game[bank]['money'] -= price
+            return f'{houses_player} buys a house on {houses_property} for {price}M$'
+
+
+def unmortgage(game: Dict, definitions: Properties, bank: str,
                mortgage_player: str, mortgage_property: str):
     if mortgage_player and mortgage_property:
         player_data = game[mortgage_player]
         if player_data['properties'][mortgage_property]['mortgage']:
-            price = get_redemption_cost(mortgage_property, definitions)
+            price = definitions.get_redemption_cost(mortgage_property)
             player_data['properties'][mortgage_property]['mortgage'] = False
             player_data['money'] -= price
             game[bank]['money'] += price
             return f'{mortgage_player} unmortgages {mortgage_property} for {price}M$'
 
 
-def update_callbacks(app, definitions: Dict, human_players: List[str], bank: str):
+def update_callbacks(app, definitions: Properties, human_players: List[str], bank: str):
     @app.callback(
         Output('game-state', 'data'),
         [
@@ -108,6 +132,9 @@ def update_callbacks(app, definitions: Dict, human_players: List[str], bank: str
             Input('out-of-jail-button', 'n_clicks'),
             Input('mortgage-button', 'n_clicks'),
             Input('unmortgage-button', 'n_clicks'),
+            Input('buy-house-button', 'n_clicks'),
+            Input('sell-house-button', 'n_clicks'),
+
         ],
         [
             State('game-state', 'data'),
@@ -125,17 +152,22 @@ def update_callbacks(app, definitions: Dict, human_players: List[str], bank: str
 
             State('mortgage-player', 'value'),
             State('mortgage-property', 'value'),
+
+            State('houses-player', 'value'),
+            State('houses-property', 'value'),
         ]
     )
     def update_game(
             backward_n_clicks: int, forward_n_clicks: int,
             pay_n_clicks: int, trade_n_clicks: int, go_n_clicks: int, income_tax_n_clicks: int,
             super_tax_n_clicks: int, out_of_jail_n_clicks: int, mortgage_n_clicks: int, unmortgage_n_clicks: int,
+            buy_house_n_clicks: int, sell_house_n_clicks: int,
             data: str,
             pay_player: str, receive_player: str, pay_amount: int,
             trade_seller: str, trade_buyer: str, trade_property: str, trade_price: int,
             extra_player: str,
             mortgage_player: str, mortgage_property: str,
+            houses_player: str, houses_property: str,
     ):
         if not data:
             raise PreventUpdate
@@ -168,6 +200,10 @@ def update_callbacks(app, definitions: Dict, human_players: List[str], bank: str
                 msg = mortgage(game, definitions, bank, mortgage_player, mortgage_property)
             elif 'unmortgage-button.n_clicks' in triggers and unmortgage_n_clicks:
                 msg = unmortgage(game, definitions, bank, mortgage_player, mortgage_property)
+            elif 'buy-house-button.n_clicks' in triggers and buy_house_n_clicks:
+                msg = buy_house(game, definitions, bank, houses_player, houses_property)
+            elif 'sell-house-button.n_clicks' in triggers and sell_house_n_clicks:
+                msg = sell_house(game, definitions, bank, houses_player, houses_property)
             else:
                 # this is the first time when all n_clicks are 0
                 return game_state.to_json()

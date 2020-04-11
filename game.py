@@ -1,6 +1,7 @@
 import json
 from typing import List, Dict, Tuple
 
+from properties import Properties
 from value import get_player_total_value
 
 
@@ -9,7 +10,7 @@ class Game:
     def __init__(self):
         self.state: Dict = {}
 
-    def initialise(self, definitions: Dict, human_players: List[str], bank: str):
+    def initialise(self, definitions: Properties, human_players: List[str], bank: str):
         self.state = {'pointer': -1, 'stack': []}
 
         initial_player_money = 1500
@@ -18,7 +19,7 @@ class Game:
         bank_money = total_money - len(human_players) * initial_player_money
         game[bank] = {'money': bank_money,
                       'properties': {
-                          prop: {'mortgage': False, 'houses': 0} for prop in definitions
+                          prop: {'mortgage': False, 'houses': 0} for prop in definitions.data
                       }
                       }
         self.add_state(game, 'Start', definitions)
@@ -28,7 +29,7 @@ class Game:
         current = self.state['stack'][pointer]
         return current[0]
 
-    def add_state(self, game: Dict, msg: str, definitions: Dict):
+    def add_state(self, game: Dict, msg: str, definitions: Properties):
         pointer = self.state['pointer']
         del self.state['stack'][pointer + 1:]
         for player, data in game.items():

@@ -4,7 +4,7 @@ import dash_bootstrap_components as dbc
 from callbacks import register_callbacks
 from game import Game
 from layout import create_layout
-from properties import get_properties
+from properties import Properties
 from update import update_callbacks
 
 
@@ -13,7 +13,7 @@ def main():
 
     human_players = ['Amelie', 'Sofia', 'Jackie', 'Andrea']
     bank = 'Bank'
-    property_definitions = get_properties()
+    property_definitions = Properties()
 
     game_state = Game()
     game_state.initialise(property_definitions, human_players, bank)
