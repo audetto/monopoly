@@ -175,6 +175,6 @@ def update_callbacks(app, definitions: Dict, human_players: List[str], bank: str
             if not msg:
                 raise PreventUpdate
 
-            game_state.add_state(game, msg)
+            game_state.add_state(game, msg, definitions)
 
         return game_state.to_json()

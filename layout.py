@@ -86,6 +86,10 @@ def create_layout(human_players: List[str], bank: str, game_state: Game):
         dbc.Button('Unmortgage', id='unmortgage-button', color="success", className="mr-1"),
     ])))
 
+    charts_tab = dbc.Card(dbc.CardBody(
+        dcc.Graph(id='history-charts')
+    ))
+
     control_panel = [
         dbc.Row(dbc.Col(dbc.Alert('Monopoly @ Cratbree'))),
         dbc.Row(dbc.Col(dbc.ButtonGroup([
@@ -104,6 +108,7 @@ def create_layout(human_players: List[str], bank: str, game_state: Game):
             dbc.Col(control_panel, width=2),
             dbc.Col([
                 dbc.Row(dbc.Col(dbc.Tabs([
+                    dbc.Tab(charts_tab, label="Charts"),  # must be first due to a dash bug
                     dbc.Tab(pay_receive_tab, label="Money"),
                     dbc.Tab(property_dealing_tab, label="Trading"),
                     dbc.Tab(extra_tab, label="Extra"),
