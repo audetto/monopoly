@@ -8,6 +8,7 @@ from dash.exceptions import PreventUpdate
 from game import Game
 from layout import EMPTY_SELECT
 from properties import get_color_style, get_tradable_properties, get_property_value, get_sorted_properties
+from value import get_player_total_value
 
 
 def get_options_for_player_tradable_properties(properties: Dict, definitions: Dict) -> List[Dict]:
@@ -21,6 +22,7 @@ def register_callbacks(app, definitions: Dict, human_players: List[str], bank: s
     outputs = []
     for player in all_players:
         outputs.append(Output(f'{player}-money', 'value'))
+        outputs.append(Output(f'{player}-total', 'value'))
         outputs.append(Output(f'{player}-properties', 'children'))
 
     @app.callback(
@@ -45,6 +47,8 @@ def register_callbacks(app, definitions: Dict, human_players: List[str], bank: s
             player_data = game[player]
             money = player_data['money']
             results.append(f'{money:,}')
+            total = get_player_total_value(player_data, definitions)
+            results.append(f'{total:,}')
 
             player_properties = player_data['properties']
             sorted_props = get_sorted_properties(player_properties, definitions)
