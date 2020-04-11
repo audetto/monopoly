@@ -71,9 +71,9 @@ def register_callbacks(app, definitions: Properties, human_players: List[str], b
 
         progress, msg = game_state.get_progress()
 
-        history, pointer = game_state.get_history()
+        history, pointer = game_state.get_history(10)
         highlight = {'background-color': 'yellow', 'color': 'red'}
-        rows = [html.Tr(html.Td(msg, style=(highlight if i == pointer else None))) for i, msg in enumerate(history)]
+        rows = [html.Tr(html.Td(msg, style=(highlight if i == pointer else None))) for i, msg in history]
         rows.insert(0, html.Tr(html.Th('History')))
         history_table = dbc.Table(html.Tbody(rows), size='sm')
 

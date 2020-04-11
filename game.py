@@ -49,9 +49,11 @@ class Game:
         progress = (pointer + 1) / (upper_bound + 1)
         return progress, f'{pointer + 1} / {upper_bound + 1}'
 
-    def get_history(self) -> Tuple[List[str], int]:
+    def get_history(self, width: int) -> Tuple[List[Tuple[int, str]], int]:
         pointer = self.state['pointer']
-        history = [msg for game, msg in self.state['stack']]
+        lower = pointer - width
+        upper = pointer + width
+        history = [(i, msg) for i, (_, msg) in enumerate(self.state['stack']) if lower <= i <= upper]
         return history, pointer
 
     def get_player_value_history(self, player: str) -> List[int]:
