@@ -32,7 +32,7 @@ def create_layout(human_players: List[str], bank: str, game_state: Game):
         ], row=True),
         dbc.FormGroup([
             dbc.Label('To', html_for='receive-player'),
-            dbc.Col(dbc.Select(id='receive-player', options=player_selects))
+            dbc.Col(dbc.Select(id='receive-player', options=player_selects, value=bank))
         ], row=True),
         dbc.FormGroup([
             dbc.Label('Amount', html_for='amount-pay'),
@@ -44,7 +44,7 @@ def create_layout(human_players: List[str], bank: str, game_state: Game):
     property_dealing_tab = dbc.Card(dbc.CardBody(dbc.Form([
         dbc.FormGroup([
             dbc.Label('Seller', html_for='trade-seller'),
-            dbc.Col(dbc.Select(id='trade-seller', options=actual_players_selects))
+            dbc.Col(dbc.Select(id='trade-seller', options=actual_players_selects, value=bank))
         ], row=True),
         dbc.FormGroup([
             dbc.Label('Buyer', html_for='trade-buyer'),

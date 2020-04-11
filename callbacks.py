@@ -7,7 +7,13 @@ from dash.exceptions import PreventUpdate
 
 from game import Game
 from layout import EMPTY_SELECT
-from properties import get_color_style
+from properties import get_color_style, get_tradable_properties, get_property_value, get_sorted_properties
+
+
+def get_options_for_player_tradable_properties(properties: Dict, definitions: Dict) -> List[Dict]:
+    sorted_props = get_sorted_properties(properties, definitions)
+    options = EMPTY_SELECT + [{'label': p} for p in sorted_props]
+    return options
 
 
 def register_callbacks(app, definitions: Dict, human_players: List[str], bank: str):
@@ -40,9 +46,12 @@ def register_callbacks(app, definitions: Dict, human_players: List[str], bank: s
             money = player_data['money']
             results.append(f'{money:,}')
 
+            player_properties = player_data['properties']
+            sorted_props = get_sorted_properties(player_properties, definitions)
+
             rows = [html.Tr(html.Td(
                 prop,
-                style=get_color_style(definitions[prop], prop_data))) for prop, prop_data in player_data['properties'].items()]
+                style=get_color_style(definitions[prop], player_properties[prop]))) for prop in sorted_props]
             table = dbc.Table(html.Tbody(rows), size='sm')
             results.append(table)
 
@@ -74,14 +83,12 @@ def register_callbacks(app, definitions: Dict, human_players: List[str], bank: s
         game_state = Game.from_json(data)
         game = game_state.get_current_game()
 
-        properties = game[seller]['properties']
-        options = EMPTY_SELECT + [{'label': p} for p, d in properties.items() if d['houses'] == 0]
+        player_data = game[seller]
+        tradable_properties = get_tradable_properties(player_data)
+        options = get_options_for_player_tradable_properties(tradable_properties, definitions)
 
-        if prop in properties:
-            is_mortgaged = properties[prop]['mortgage']
-            price = definitions[prop]['price']
-            if is_mortgaged:
-                price = price * 45 // 100
+        if prop in tradable_properties:
+            price = get_property_value(prop, player_data, definitions)
         else:
             price = ''
 
@@ -99,20 +106,22 @@ def register_callbacks(app, definitions: Dict, human_players: List[str], bank: s
             Input('mortgage-property', 'value'),
         ]
     )
-    def update_mortgage_property(data: str, player: str, property: str):
+    def update_mortgage_property(data: str, player: str, prop: str):
         if not player or not data:
             raise PreventUpdate
 
         game_state = Game.from_json(data)
         game = game_state.get_current_game()
 
-        properties = game[player]['properties']
-        options = EMPTY_SELECT + [{'label': p} for p, d in properties.items() if d['houses'] == 0]
+        player_data = game[player]
+        tradable_properties = get_tradable_properties(player_data)
+        options = get_options_for_player_tradable_properties(tradable_properties, definitions)
 
-        mortgage = False
-        unmortgage = False
-        if property and property in properties:
-            mortgage = properties[property]['mortgage']
+        if prop and prop in tradable_properties:
+            mortgage = tradable_properties[prop]['mortgage']
             unmortgage = not mortgage
+        else:
+            mortgage = False
+            unmortgage = False
 
         return options, mortgage, unmortgage

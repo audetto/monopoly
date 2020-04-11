@@ -6,6 +6,7 @@ from dash.dependencies import Output, Input, State
 from dash.exceptions import PreventUpdate
 
 from game import Game
+from properties import get_redemption_cost, get_mortgage_value
 
 
 def pay(game: Dict, human_players: List[str],
@@ -74,12 +75,11 @@ def mortgage(game: Dict, definitions: Dict, bank: str,
     if mortgage_player and mortgage_property:
         player_data = game[mortgage_player]
         if not player_data['properties'][mortgage_property]['mortgage']:
-            definition = definitions[mortgage_property]
-            price = definition['price'] // 2
+            price = get_mortgage_value(mortgage_property, definitions)
             player_data['properties'][mortgage_property]['mortgage'] = True
             player_data['money'] += price
             game[bank]['money'] -= price
-            return f'{mortgage_player} mortgages {mortgage_property} for {price}$'
+            return f'{mortgage_player} mortgages {mortgage_property} for {price}M$'
 
 
 def unmortgage(game: Dict, definitions: Dict, bank: str,
@@ -87,12 +87,11 @@ def unmortgage(game: Dict, definitions: Dict, bank: str,
     if mortgage_player and mortgage_property:
         player_data = game[mortgage_player]
         if player_data['properties'][mortgage_property]['mortgage']:
-            definition = definitions[mortgage_property]
-            price = definition['price'] * 11 // 20
+            price = get_redemption_cost(mortgage_property, definitions)
             player_data['properties'][mortgage_property]['mortgage'] = False
             player_data['money'] -= price
             game[bank]['money'] += price
-            return f'{mortgage_player} unmortgages {mortgage_property} for {price}$'
+            return f'{mortgage_player} unmortgages {mortgage_property} for {price}M$'
 
 
 def update_callbacks(app, definitions: Dict, human_players: List[str], bank: str):
