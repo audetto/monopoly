@@ -67,7 +67,7 @@ def create_layout(human_players: List[str], bank: str, game: Dict):
         ], row=True),
         dbc.Button('Go', id='go-button', color="success", className="mr-1"),
         dbc.Button('Income Tax', id='income-tax-button', color="dark", className="mr-1"),
-        dbc.Button('Super tax', id='super-tax-button', color="secondary", className="mr-1"),
+        dbc.Button('Super Tax', id='super-tax-button', color="secondary", className="mr-1"),
         dbc.Button('Out of Jail', id='out-of-jail-button', color="danger", className="mr-1"),
     ])))
 
