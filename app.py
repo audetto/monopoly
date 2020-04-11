@@ -8,8 +8,8 @@ from properties import Properties
 from update import update_callbacks
 
 
-def main():
-    app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+def create_app():
+    the_app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
     human_players = ['Amelie', 'Sofia', 'Jackie', 'Andrea']
     bank = 'Bank'
@@ -18,14 +18,14 @@ def main():
     game_state = Game()
     game_state.initialise(property_definitions, human_players, bank)
 
-    app.title = 'Monopoly'
-    app.layout = create_layout(human_players, bank, game_state)
-    register_callbacks(app, property_definitions, human_players, bank)
-    update_callbacks(app, property_definitions, human_players, bank)
-    return app
+    the_app.title = 'Monopoly'
+    the_app.layout = create_layout(human_players, bank, game_state)
+    register_callbacks(the_app, property_definitions, human_players, bank)
+    update_callbacks(the_app, property_definitions, human_players, bank)
+    return the_app
 
 
-app = main()
+app = create_app()
 server = app.server
 
 
