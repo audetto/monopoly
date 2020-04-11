@@ -22,9 +22,12 @@ def main():
     app.layout = create_layout(human_players, bank, game_state)
     register_callbacks(app, property_definitions, human_players, bank)
     update_callbacks(app, property_definitions, human_players, bank)
+    return app
 
-    app.run_server(host='0.0.0.0')
+
+app = main()
+server = app.server
 
 
 if __name__ == "__main__":
-    main()
+    app.run_server(host='0.0.0.0')
