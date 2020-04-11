@@ -105,6 +105,8 @@ def create_layout(human_players: List[str], bank: str, game_state: Game):
 
     control_panel = [
         dbc.Row(dbc.Col(dbc.Alert('Monopoly @ Cratbree'))),
+        dbc.Row(dbc.Col(dbc.Input(id='json-size', disabled=True))),
+        html.Br(),
         dbc.Row(dbc.Col(dbc.ButtonGroup([
             dbc.Button('Backward', id='backward-button', color='danger', className="mr-1"),
             dbc.Button('Forward', id='forward-button', color='success', className="mr-1"),

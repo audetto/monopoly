@@ -32,6 +32,7 @@ def register_callbacks(app, definitions: Properties, human_players: List[str], b
             Output('game-progress', 'children'),
             Output('history-table', 'children'),
             Output('history-charts', 'figure'),
+            Output('json-size', 'value'),
         ],
         [
             Input('game-state', 'data')
@@ -77,7 +78,9 @@ def register_callbacks(app, definitions: Properties, human_players: List[str], b
         rows.insert(0, html.Tr(html.Th('History')))
         history_table = dbc.Table(html.Tbody(rows), size='sm')
 
-        return results + [progress * 100, msg, history_table, fig]
+        json_size = f'Game data: {len(data):,} bytes'
+
+        return results + [progress * 100, msg, history_table, fig, json_size]
 
     @app.callback(
         [
