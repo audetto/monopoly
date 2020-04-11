@@ -14,7 +14,7 @@ def create_layout(human_players: List[str], bank: str, game: Dict):
     for player in human_players + [bank]:
         color = 'danger' if player == bank else 'primary'
         label = dbc.Alert(player, color=color)
-        money = dbc.Input(id=f'{player}-money', type='number', disabled=True)
+        money = dbc.Input(id=f'{player}-money', disabled=True)
         properties = dbc.Table(id=f'{player}-properties')
         col = dbc.Col([label, money, html.Br(), properties])
         player_columns.append(col)

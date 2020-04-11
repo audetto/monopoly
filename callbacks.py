@@ -30,7 +30,8 @@ def register_callbacks(app, definitions: Dict, human_players: List[str], bank: s
         results = []
         for player in all_players:
             player_data = game[player]
-            results.append(player_data['money'])
+            money = player_data['money']
+            results.append(f'{money:,}')
 
             rows = [html.Tr(html.Td(
                 prop,

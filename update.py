@@ -1,16 +1,25 @@
 import json
-from typing import Dict
+from typing import Dict, List
 
 import dash
 from dash.dependencies import Output, Input, State
 from dash.exceptions import PreventUpdate
 
 
-def pay(game: Dict,
+def pay(game: Dict, human_players: List[str],
         pay_player: str, receive_player: str, pay_amount: int):
     if pay_player != receive_player and pay_amount:
-        game[pay_player]['money'] -= pay_amount
-        game[receive_player]['money'] += pay_amount
+        if pay_player == 'ALL':
+            for player in human_players:
+                game[player]['money'] -= pay_amount
+                game[receive_player]['money'] += pay_amount
+        elif receive_player == 'ALL':
+            for player in human_players:
+                game[pay_player]['money'] -= pay_amount
+                game[player]['money'] += pay_amount
+        else:
+            game[pay_player]['money'] -= pay_amount
+            game[receive_player]['money'] += pay_amount
 
 
 def go(game: Dict, bank: str,
@@ -76,7 +85,7 @@ def unmortgage(game: Dict, definitions: Dict, bank: str,
             game[bank]['money'] += price
 
 
-def update_callbacks(app, definitions: Dict, bank: str):
+def update_callbacks(app, definitions: Dict, human_players: List[str], bank: str):
     @app.callback(
         Output('game-state', 'data'),
         [
@@ -111,8 +120,8 @@ def update_callbacks(app, definitions: Dict, bank: str):
             pay_n_clicks: int, trade_n_clicks: int, go_n_clicks: int, income_tax_n_clicks: int,
             super_tax_n_clicks: int, out_of_jail_n_clicks: int, mortgage_n_clicks: int, unmortgage_n_clicks: int,
             data: str,
-            pay_player: str, receive_player: str, pay_amount: str,
-            trade_seller: str, trade_buyer: str, trade_property: str, trade_price: str,
+            pay_player: str, receive_player: str, pay_amount: int,
+            trade_seller: str, trade_buyer: str, trade_property: str, trade_price: int,
             extra_player: str,
             mortgage_player: str, mortgage_property: str,
     ):
@@ -124,7 +133,7 @@ def update_callbacks(app, definitions: Dict, bank: str):
         triggers = [t['prop_id'] for t in dash.callback_context.triggered]
 
         if 'pay-button.n_clicks' in triggers and pay_n_clicks:
-            pay(game, pay_player, receive_player, pay_amount)
+            pay(game, human_players, pay_player, receive_player, pay_amount)
         elif 'trade-button.n_clicks' in triggers and trade_n_clicks:
             trade(game, trade_seller, trade_buyer, trade_property, trade_price)
         elif 'go-button.n_clicks' in triggers and go_n_clicks:
