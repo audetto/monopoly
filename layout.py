@@ -1,14 +1,15 @@
-import json
-from typing import List, Dict
+from typing import List
 
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 
+from game import Game
+
 EMPTY_SELECT = [{'label': 'empty'}]
 
 
-def create_layout(human_players: List[str], bank: str, game: Dict):
+def create_layout(human_players: List[str], bank: str, game_state: Game):
     player_columns = []
     player_selects = []
     for player in human_players + [bank]:
@@ -84,10 +85,17 @@ def create_layout(human_players: List[str], bank: str, game: Dict):
         dbc.Button('Unmortgage', id='unmortgage-button', color="success", className="mr-1"),
     ])))
 
+    control_panel = [
+        dbc.Row(dbc.Col(dbc.Alert('Monopoly'))),
+        dbc.Row(dbc.Col(dbc.Button('Backward', id='backward-button', className="mr-1"))),
+        dbc.Row(dbc.Col(dbc.Progress(id='game-progress'))),
+        dbc.Row(dbc.Col(dbc.Button('Forward', id='forward-button', className="mr-1"))),
+    ]
+
     game_layout = dbc.Container([
         html.Br(),
         dbc.Row([
-            dbc.Col(dbc.Alert('Monopoly'), width=1),
+            dbc.Col(control_panel, width=1),
             dbc.Col([
                 dbc.Row(dbc.Col(dbc.Tabs([
                     dbc.Tab(pay_receive_tab, label="Money"),
@@ -101,7 +109,7 @@ def create_layout(human_players: List[str], bank: str, game: Dict):
         ])
     ], fluid=True)
 
-    store = dcc.Store(id='game-state', data=json.dumps(game))
+    store = dcc.Store(id='game-state', data=game_state.to_json())
 
     layout = html.Div([store, game_layout])
 

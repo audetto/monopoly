@@ -1,4 +1,3 @@
-import json
 from typing import List, Dict
 
 import dash_bootstrap_components as dbc
@@ -6,6 +5,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
 
+from game import Game
 from properties import get_color_style
 
 
@@ -17,7 +17,7 @@ def register_callbacks(app, definitions: Dict, human_players: List[str], bank: s
         outputs.append(Output(f'{player}-properties', 'children'))
 
     @app.callback(
-        outputs,
+        outputs + [Output('game-progress', 'value'), Output('game-progress', 'children')],
         [
             Input('game-state', 'data')
         ]
@@ -26,7 +26,9 @@ def register_callbacks(app, definitions: Dict, human_players: List[str], bank: s
         if not data:
             raise PreventUpdate
 
-        game = json.loads(data)
+        game_state = Game.from_json(data)
+        game = game_state.get_current_game()
+
         results = []
         for player in all_players:
             player_data = game[player]
@@ -39,7 +41,9 @@ def register_callbacks(app, definitions: Dict, human_players: List[str], bank: s
             table = dbc.Table(html.Tbody(rows), size='sm')
             results.append(table)
 
-        return results
+        progress, msg = game_state.get_progress()
+
+        return results + [progress * 100, msg]
 
     @app.callback(
         [
@@ -56,7 +60,8 @@ def register_callbacks(app, definitions: Dict, human_players: List[str], bank: s
         if not seller or not data:
             raise PreventUpdate
 
-        game = json.loads(data)
+        game_state = Game.from_json(data)
+        game = game_state.get_current_game()
 
         properties = game[seller]['properties']
         options = [{'label': p} for p, d in properties.items() if d['houses'] == 0]
@@ -87,7 +92,8 @@ def register_callbacks(app, definitions: Dict, human_players: List[str], bank: s
         if not player or not data:
             raise PreventUpdate
 
-        game = json.loads(data)
+        game_state = Game.from_json(data)
+        game = game_state.get_current_game()
 
         properties = game[player]['properties']
         options = [{'label': p} for p, d in properties.items() if d['houses'] == 0]
