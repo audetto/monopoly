@@ -86,16 +86,21 @@ def create_layout(human_players: List[str], bank: str, game_state: Game):
     ])))
 
     control_panel = [
-        dbc.Row(dbc.Col(dbc.Alert('Monopoly'))),
-        dbc.Row(dbc.Col(dbc.Button('Backward', id='backward-button', className="mr-1"))),
+        dbc.Row(dbc.Col(dbc.Alert('Monopoly @ Cratbree'))),
+        dbc.Row(dbc.Col(dbc.ButtonGroup([
+            dbc.Button('Backward', id='backward-button', color='danger', className="mr-1"),
+            dbc.Button('Forward', id='forward-button', color='success', className="mr-1"),
+        ], vertical=True))),
+        html.Br(),
         dbc.Row(dbc.Col(dbc.Progress(id='game-progress'))),
-        dbc.Row(dbc.Col(dbc.Button('Forward', id='forward-button', className="mr-1"))),
+        html.Br(),
+        dbc.Row(dbc.Col(dbc.Table(id='history-table'))),
     ]
 
     game_layout = dbc.Container([
         html.Br(),
         dbc.Row([
-            dbc.Col(control_panel, width=1),
+            dbc.Col(control_panel, width=2),
             dbc.Col([
                 dbc.Row(dbc.Col(dbc.Tabs([
                     dbc.Tab(pay_receive_tab, label="Money"),

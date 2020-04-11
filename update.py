@@ -75,7 +75,7 @@ def mortgage(game: Dict, definitions: Dict, bank: str,
         player_data = game[mortgage_player]
         if not player_data['properties'][mortgage_property]['mortgage']:
             definition = definitions[mortgage_property]
-            price = definition['price'] / 2
+            price = definition['price'] // 2
             player_data['properties'][mortgage_property]['mortgage'] = True
             player_data['money'] += price
             game[bank]['money'] -= price
@@ -88,7 +88,7 @@ def unmortgage(game: Dict, definitions: Dict, bank: str,
         player_data = game[mortgage_player]
         if player_data['properties'][mortgage_property]['mortgage']:
             definition = definitions[mortgage_property]
-            price = definition['price'] * 11 / 20
+            price = definition['price'] * 11 // 20
             player_data['properties'][mortgage_property]['mortgage'] = False
             player_data['money'] -= price
             game[bank]['money'] += price

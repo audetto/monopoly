@@ -18,7 +18,7 @@ class Game:
                       }
                       }
 
-        self.state = {'pointer': 0, 'stack': [(game, 'initial_state')]}
+        self.state = {'pointer': 0, 'stack': [(game, 'Start')]}
 
     def get_current_game(self) -> Dict:
         pointer = self.state['pointer']
@@ -42,6 +42,11 @@ class Game:
         upper_bound = len(self.state['stack']) - 1
         progress = (pointer + 1) / (upper_bound + 1)
         return progress, f'{pointer + 1} / {upper_bound + 1}'
+
+    def get_history(self) -> Tuple[List[str], int]:
+        pointer = self.state['pointer']
+        history = [msg for game, msg in self.state['stack']]
+        return history, pointer
 
     @staticmethod
     def from_json(data: str) -> 'Game':

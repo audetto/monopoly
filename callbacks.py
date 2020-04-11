@@ -18,7 +18,11 @@ def register_callbacks(app, definitions: Dict, human_players: List[str], bank: s
         outputs.append(Output(f'{player}-properties', 'children'))
 
     @app.callback(
-        outputs + [Output('game-progress', 'value'), Output('game-progress', 'children')],
+        outputs + [
+            Output('game-progress', 'value'),
+            Output('game-progress', 'children'),
+            Output('history-table', 'children'),
+        ],
         [
             Input('game-state', 'data')
         ]
@@ -44,7 +48,13 @@ def register_callbacks(app, definitions: Dict, human_players: List[str], bank: s
 
         progress, msg = game_state.get_progress()
 
-        return results + [progress * 100, msg]
+        history, pointer = game_state.get_history()
+        highlight = {'background-color': 'yellow', 'color': 'red'}
+        rows = [html.Tr(html.Td(msg, style=(highlight if i == pointer else None))) for i, msg in enumerate(history)]
+        rows.insert(0, html.Tr(html.Th('History')))
+        history_table = dbc.Table(html.Tbody(rows), size='sm')
+
+        return results + [progress * 100, msg, history_table]
 
     @app.callback(
         [
@@ -71,7 +81,7 @@ def register_callbacks(app, definitions: Dict, human_players: List[str], bank: s
             is_mortgaged = properties[prop]['mortgage']
             price = definitions[prop]['price']
             if is_mortgaged:
-                price = price * 45 / 100
+                price = price * 45 // 100
         else:
             price = ''
 
