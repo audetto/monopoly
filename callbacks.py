@@ -6,6 +6,7 @@ from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
 
 from game import Game
+from layout import EMPTY_SELECT
 from properties import get_color_style
 
 
@@ -64,7 +65,7 @@ def register_callbacks(app, definitions: Dict, human_players: List[str], bank: s
         game = game_state.get_current_game()
 
         properties = game[seller]['properties']
-        options = [{'label': p} for p, d in properties.items() if d['houses'] == 0]
+        options = EMPTY_SELECT + [{'label': p} for p, d in properties.items() if d['houses'] == 0]
 
         if prop in properties:
             is_mortgaged = properties[prop]['mortgage']
@@ -96,7 +97,7 @@ def register_callbacks(app, definitions: Dict, human_players: List[str], bank: s
         game = game_state.get_current_game()
 
         properties = game[player]['properties']
-        options = [{'label': p} for p, d in properties.items() if d['houses'] == 0]
+        options = EMPTY_SELECT + [{'label': p} for p, d in properties.items() if d['houses'] == 0]
 
         mortgage = False
         unmortgage = False

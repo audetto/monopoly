@@ -6,7 +6,7 @@ import dash_html_components as html
 
 from game import Game
 
-EMPTY_SELECT = [{'label': 'empty'}]
+EMPTY_SELECT = [{'label': ''}]
 
 
 def create_layout(human_players: List[str], bank: str, game_state: Game):
