@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import pandas as pd
 
@@ -6,6 +6,9 @@ import pandas as pd
 class Properties:
 
     FOREGROUND = {'Brown': 'white', 'Dark Blue': 'white'}
+    HOUSES = ['1 house', '2 houses', '3 houses', '4 houses', 'hotel']
+    STATION_RENT = [1, 2, 4, 8]
+    UTILITY_RENT = [4, 10]
 
     def __init__(self):
         file_name = "properties.csv"
@@ -72,3 +75,40 @@ class Properties:
             return self.data[prop]['price']
         s = sorted(properties.keys(), key=value)
         return s
+
+    def get_rent_properties(self, player: str, humans: List[str], game: Dict) -> Dict:
+        result = {}
+        for human in humans:
+            if human != player:
+                human_data = game[human]
+                for prop, data in human_data['properties'].items():
+                    if not data['mortgage']:
+                        result[prop] = self.data[prop]
+        return result
+
+    def get_rent_for_property(self, prop: str, dice: int, game: Dict) -> Tuple[str, int]:
+        owner = None
+        for player, data in game.items():
+            if prop in data['properties']:
+                owner = player
+                break
+
+        owner_properties = game[owner]['properties']
+        if owner_properties[prop]['mortgage']:
+            rent = 0
+        else:
+            prop_data = self.data[prop]
+            number_of_houses = owner_properties[prop]['houses']
+            if number_of_houses > 0:
+                rent = prop_data[self.HOUSES[number_of_houses - 1]]
+            else:
+                owned = [k for k in owner_properties if self.data[k]['color'] == prop_data['color']]
+                rent = prop_data['rent']
+                if prop_data['rule'] == 'Normal':
+                    if len(owned) == self.groups[prop_data['color']]:
+                        rent *= 2
+                elif prop_data['rule'] == 'Station':
+                    rent *= self.STATION_RENT[len(owned) - 1]
+                elif prop_data['rule'] == 'Utility':
+                    rent = dice * self.UTILITY_RENT[len(owned) - 1]
+        return owner, int(rent)

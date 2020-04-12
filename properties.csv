@@ -1,4 +1,4 @@
-name,color,price,house price,rent,1 house,2 house,3 house,4 house,hotel,rule
+name,color,price,house price,rent,1 house,2 houses,3 houses,4 houses,hotel,rule
 Old Kent Road,Brown,60,50,2,10,30,90,160,250,Normal
 White Chapel,Brown,60,50, 4,20,60,180,320,450,Normal
 "The Angel, Islington",Light Blue,100,50,6,30,90,270,400,550,Normal
@@ -23,7 +23,7 @@ Park Lane,Dark Blue,350,200,35,175,500,1100,1300,1500,Normal
 Mayfair,Dark Blue,400,200,50,200,600,1400,1700,2000,Normal
 Electric Company,White,150,,,,,,,,Utility
 Water Works,White,150,,,,,,,,Utility
-King’s Cross Station,Grey,200,,,,,,,,Station
-Marylebone Station,Grey,200,,,,,,,,Station
-Fenchurch St. Station,Grey,200,,,,,,,,Station
-Liverpool St. Station,Grey,200,,,,,,,,Station
+King’s Cross Station,Grey,200,,25,,,,,,Station
+Marylebone Station,Grey,200,,25,,,,,,Station
+Fenchurch St. Station,Grey,200,,25,,,,,,Station
+Liverpool St. Station,Grey,200,,25,,,,,,Station

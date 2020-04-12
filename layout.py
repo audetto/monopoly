@@ -99,13 +99,33 @@ def create_layout(human_players: List[str], bank: str, game_state: Game):
         dbc.Button('Sell house', id='sell-house-button', color="danger", className="mr-1"),
     ])))
 
+    rent_tab = dbc.Card(dbc.CardBody(dbc.Form([
+        dbc.FormGroup([
+            dbc.Label('Player', html_for='rent-player'),
+            dbc.Col(dbc.Select(id='rent-player', options=human_players_selects))
+        ], row=True),
+        dbc.FormGroup([
+            dbc.Label('Property', html_for='rent-property'),
+            dbc.Col(dbc.Select(id='rent-property', options=EMPTY_SELECT))
+        ], row=True),
+        dbc.FormGroup([
+            dbc.Label('Dice roll', html_for='rent-dice'),
+            dbc.Col(dbc.Input(id='rent-dice', type='number', min=2, max=12, step=1, value=6))
+        ], row=True),
+        dbc.FormGroup([
+            dbc.Label('Rent', html_for='rent-price'),
+            dbc.Col(dbc.Input(id='rent-price', disabled=True))
+        ], row=True),
+        dbc.Button('Pay rent', id='pay-rent-button', color="danger", className="mr-1"),
+    ])))
+
     charts_tab = dbc.Card(dbc.CardBody(
         dcc.Graph(id='history-charts')
     ))
 
     control_panel = [
         dbc.Row(dbc.Col(dbc.Alert('Monopoly @ Cratbree'))),
-        dbc.Row(dbc.Col(dbc.Input(id='json-size', disabled=True))),
+        dbc.Row(dbc.Col(dbc.Alert(id='json-size', color='info'))),
         html.Br(),
         dbc.Row(dbc.Col(dbc.ButtonGroup([
             dbc.Button('Backward', id='backward-button', color='danger', className="mr-1"),
@@ -129,6 +149,7 @@ def create_layout(human_players: List[str], bank: str, game_state: Game):
                     dbc.Tab(extra_tab, label="Extra"),
                     dbc.Tab(mortgage_tab, label="Mortgage"),
                     dbc.Tab(buildings_tab, label="Buildings"),
+                    dbc.Tab(rent_tab, label="Rent"),
                 ]))),
                 html.Br(),
                 dbc.Row(player_columns),

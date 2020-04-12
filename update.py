@@ -106,6 +106,16 @@ def sell_house(game: Dict, definitions: Properties, bank: str,
             return f'{houses_player} buys a house on {houses_property} for {price}M$'
 
 
+def pay_rent(game: Dict, definitions: Properties,
+             rent_player: str, rent_property: str, rent_dice: int):
+    if rent_player and rent_property:
+        owner, price = definitions.get_rent_for_property(rent_property, rent_dice, game)
+        if rent_player != owner and price:
+            game[rent_player]['money'] -= price
+            game[owner]['money'] += price
+            return f'{rent_player} pays rent on {rent_property} to {owner} for {price}M$'
+
+
 def unmortgage(game: Dict, definitions: Properties, bank: str,
                mortgage_player: str, mortgage_property: str):
     if mortgage_player and mortgage_property:
@@ -134,7 +144,7 @@ def update_callbacks(app, definitions: Properties, human_players: List[str], ban
             Input('unmortgage-button', 'n_clicks'),
             Input('buy-house-button', 'n_clicks'),
             Input('sell-house-button', 'n_clicks'),
-
+            Input('pay-rent-button', 'n_clicks'),
         ],
         [
             State('game-state', 'data'),
@@ -155,6 +165,10 @@ def update_callbacks(app, definitions: Properties, human_players: List[str], ban
 
             State('houses-player', 'value'),
             State('houses-property', 'value'),
+
+            State('rent-player', 'value'),
+            State('rent-property', 'value'),
+            State('rent-dice', 'value')
         ]
     )
     def update_game(
@@ -162,12 +176,14 @@ def update_callbacks(app, definitions: Properties, human_players: List[str], ban
             pay_n_clicks: int, trade_n_clicks: int, go_n_clicks: int, income_tax_n_clicks: int,
             super_tax_n_clicks: int, out_of_jail_n_clicks: int, mortgage_n_clicks: int, unmortgage_n_clicks: int,
             buy_house_n_clicks: int, sell_house_n_clicks: int,
+            pay_rent_n_clicks: int,
             data: str,
             pay_player: str, receive_player: str, pay_amount: int,
             trade_seller: str, trade_buyer: str, trade_property: str, trade_price: int,
             extra_player: str,
             mortgage_player: str, mortgage_property: str,
             houses_player: str, houses_property: str,
+            rent_player: str, rent_property: str, rent_dice: int,
     ):
         if not data:
             raise PreventUpdate
@@ -204,6 +220,8 @@ def update_callbacks(app, definitions: Properties, human_players: List[str], ban
                 msg = buy_house(game, definitions, bank, houses_player, houses_property)
             elif 'sell-house-button.n_clicks' in triggers and sell_house_n_clicks:
                 msg = sell_house(game, definitions, bank, houses_player, houses_property)
+            elif 'pay-rent-button.n_clicks' in triggers and pay_rent_n_clicks:
+                msg = pay_rent(game, definitions, rent_player, rent_property, rent_dice)
             else:
                 # this is the first time when all n_clicks are 0
                 return game_state.to_json()

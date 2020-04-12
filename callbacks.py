@@ -32,7 +32,7 @@ def register_callbacks(app, definitions: Properties, human_players: List[str], b
             Output('game-progress', 'children'),
             Output('history-table', 'children'),
             Output('history-charts', 'figure'),
-            Output('json-size', 'value'),
+            Output('json-size', 'children'),
         ],
         [
             Input('game-state', 'data')
@@ -175,3 +175,32 @@ def register_callbacks(app, definitions: Properties, human_players: List[str], b
             sell = False
 
         return options, buy, sell
+
+    @app.callback(
+        [
+            Output('rent-property', 'options'),
+            Output('rent-price', 'value'),
+        ],
+        [
+            Input('game-state', 'data'),
+            Input('rent-player', 'value'),
+            Input('rent-property', 'value'),
+            Input('rent-dice', 'value')
+        ]
+    )
+    def update_rent_property(data: str, player: str, prop: str, dice: int):
+        if not player or not data:
+            raise PreventUpdate
+
+        game_state = Game.from_json(data)
+        game = game_state.get_current_game()
+
+        rent_properties = definitions.get_rent_properties(player, human_players, game)
+        options = get_options_for_player_properties(rent_properties, definitions)
+
+        if prop and prop in rent_properties:
+            _, price = definitions.get_rent_for_property(prop, dice, game)
+        else:
+            price = ''
+
+        return options, price
