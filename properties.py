@@ -1,3 +1,4 @@
+import os.path
 from typing import Dict, List, Tuple
 
 import pandas as pd
@@ -12,7 +13,9 @@ class Properties:
 
     def __init__(self):
         file_name = "properties.csv"
-        static = pd.read_csv(file_name, index_col='name')
+        this_folder = os.path.dirname(os.path.abspath(__file__))
+        path = os.path.join(this_folder, file_name)
+        static = pd.read_csv(path, index_col='name')
         self.data = static.to_dict(orient='index')
         self.groups = static.groupby('color')['rule'].count().to_dict()
 
