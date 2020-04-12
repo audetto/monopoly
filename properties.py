@@ -24,10 +24,10 @@ class Properties:
     
         return style
     
-    @staticmethod
-    def get_tradable_properties(player_data: Dict) -> Dict:
+    def get_tradable_properties(self, player_data: Dict) -> Dict:
         # can only sell or mortgage properties with no houses
-        properties = {k: v for k, v in player_data['properties'].items() if v['houses'] == 0}
+        built_groups = {self.data[k]['color'] for k, v in player_data['properties'].items() if v['houses'] > 0}
+        properties = {k: v for k, v in player_data['properties'].items() if self.data[k]['color'] not in built_groups}
         return properties
     
     def get_buildable_properties(self, player_data: Dict) -> Dict:
