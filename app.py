@@ -16,8 +16,9 @@ CACHE_CONFIG = {
 
 def create_app():
     the_app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
-    cache = Cache()
-    cache.init_app(the_app.server, config=CACHE_CONFIG)
+    # cache = Cache()
+    # cache.init_app(the_app.server, config=CACHE_CONFIG)
+    cache = None
 
     human_players = ['Amelie', 'Sofia', 'Andrea']
     bank = 'Bank'
