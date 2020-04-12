@@ -1,27 +1,32 @@
 import dash
 import dash_bootstrap_components as dbc
+from flask_caching import Cache
 
 from callbacks import register_callbacks
-from game import Game
 from layout import create_layout
 from properties import Properties
 from update import update_callbacks
 
+CACHE_CONFIG = {
+    'CACHE_TYPE': 'filesystem',
+    'CACHE_DIR': '/tmp/monopoly',
+    'CACHE_THRESHOLD': 10,
+}
+
 
 def create_app():
     the_app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+    cache = Cache()
+    cache.init_app(the_app.server, config=CACHE_CONFIG)
 
-    human_players = ['Amelie', 'Sofia', 'Jackie', 'Andrea']
+    human_players = ['Amelie', 'Sofia', 'Andrea']
     bank = 'Bank'
     property_definitions = Properties()
 
-    game_state = Game()
-    game_state.initialise(property_definitions, human_players, bank)
-
     the_app.title = 'Monopoly'
-    the_app.layout = create_layout(human_players, bank, game_state)
-    register_callbacks(the_app, property_definitions, human_players, bank)
-    update_callbacks(the_app, property_definitions, human_players, bank)
+    the_app.layout = lambda: create_layout(cache, property_definitions, human_players, bank)
+    register_callbacks(cache, the_app, property_definitions, human_players, bank)
+    update_callbacks(cache, the_app, property_definitions, human_players, bank)
     return the_app
 
 

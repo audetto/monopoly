@@ -1,15 +1,20 @@
-from typing import List
+from typing import List, Optional
 
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
+from flask_caching import Cache
 
 from game import Game
+from properties import Properties
 
 EMPTY_SELECT = [{'label': ''}]
 
 
-def create_layout(human_players: List[str], bank: str, game_state: Game):
+def create_layout(cache: Optional[Cache], definitions: Properties, human_players: List[str], bank: str):
+    game_state = Game()
+    game_state.initialise(definitions, human_players, bank)
+
     player_columns = []
     player_selects = []
     for player in human_players + [bank]:
@@ -157,7 +162,8 @@ def create_layout(human_players: List[str], bank: str, game_state: Game):
         ])
     ], fluid=True)
 
-    store = dcc.Store(id='game-state', data=game_state.to_json())
+    data = game_state.to_cache(cache, None)
+    store = dcc.Store(id='game-state', data=data)
 
     layout = html.Div([store, game_layout])
 

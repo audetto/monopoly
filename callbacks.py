@@ -1,10 +1,11 @@
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 import plotly.graph_objs as go
 from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
+from flask_caching import Cache
 from plotly.subplots import make_subplots
 
 from game import Game
@@ -18,7 +19,7 @@ def get_options_for_player_properties(properties: Dict, definitions: Properties)
     return options
 
 
-def register_callbacks(app, definitions: Properties, human_players: List[str], bank: str):
+def register_callbacks(cache: Optional[Cache], app, definitions: Properties, human_players: List[str], bank: str):
     all_players = human_players + [bank]
     outputs = []
     for player in all_players:
@@ -42,7 +43,7 @@ def register_callbacks(app, definitions: Properties, human_players: List[str], b
         if not data:
             raise PreventUpdate
 
-        game_state = Game.from_json(data)
+        game_state = Game.from_cache(cache, data)
         game = game_state.get_current_game()
 
         fig = make_subplots(specs=[[{"secondary_y": True}]])
@@ -78,7 +79,10 @@ def register_callbacks(app, definitions: Properties, human_players: List[str], b
         rows.insert(0, html.Tr(html.Th('History')))
         history_table = dbc.Table(html.Tbody(rows), size='sm')
 
-        json_size = f'Game data: {len(data):,} bytes'
+        if cache:
+            json_size = f'Game: {data}'
+        else:
+            json_size = f'Game: {len(data)} bytes'
 
         return results + [progress * 100, msg, history_table, fig, json_size]
 
@@ -97,7 +101,7 @@ def register_callbacks(app, definitions: Properties, human_players: List[str], b
         if not seller or not data:
             raise PreventUpdate
 
-        game_state = Game.from_json(data)
+        game_state = Game.from_cache(cache, data)
         game = game_state.get_current_game()
 
         player_data = game[seller]
@@ -127,7 +131,7 @@ def register_callbacks(app, definitions: Properties, human_players: List[str], b
         if not player or not data:
             raise PreventUpdate
 
-        game_state = Game.from_json(data)
+        game_state = Game.from_cache(cache, data)
         game = game_state.get_current_game()
 
         player_data = game[player]
@@ -159,7 +163,7 @@ def register_callbacks(app, definitions: Properties, human_players: List[str], b
         if not player or not data:
             raise PreventUpdate
 
-        game_state = Game.from_json(data)
+        game_state = Game.from_cache(cache, data)
         game = game_state.get_current_game()
 
         player_data = game[player]
@@ -192,7 +196,7 @@ def register_callbacks(app, definitions: Properties, human_players: List[str], b
         if not player or not data:
             raise PreventUpdate
 
-        game_state = Game.from_json(data)
+        game_state = Game.from_cache(cache, data)
         game = game_state.get_current_game()
 
         rent_properties = definitions.get_rent_properties(player, human_players, game)

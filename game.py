@@ -1,5 +1,8 @@
 import json
-from typing import List, Dict, Tuple
+import uuid
+from typing import List, Dict, Tuple, Optional
+
+from flask_caching import Cache
 
 from properties import Properties
 from value import get_player_total_value
@@ -61,10 +64,24 @@ class Game:
         return result
 
     @staticmethod
-    def from_json(data: str) -> 'Game':
+    def from_cache(cache: Optional[Cache], data) -> 'Game':
+        if cache:
+            session_id = data[0]
+            state = cache.get(session_id)
+        else:
+            state = json.loads(data)
+
         game = Game()
-        game.state = json.loads(data)
+        game.state = state
         return game
 
-    def to_json(self) -> str:
-        return json.dumps(self.state)
+    def to_cache(self, cache: Optional[Cache], data):
+        if cache:
+            if not data:
+                data = [str(uuid.uuid4()), 0]
+
+            session_id = data[0]
+            cache.set(session_id, self.state)
+            return [session_id, data[1] + 1]
+        else:
+            return json.dumps(self.state)

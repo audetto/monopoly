@@ -1,9 +1,10 @@
 import copy
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import dash
 from dash.dependencies import Output, Input, State
 from dash.exceptions import PreventUpdate
+from flask_caching import Cache
 
 from game import Game
 from properties import Properties
@@ -128,7 +129,7 @@ def unmortgage(game: Dict, definitions: Properties, bank: str,
             return f'{mortgage_player} unmortgages {mortgage_property} for {price}M$'
 
 
-def update_callbacks(app, definitions: Properties, human_players: List[str], bank: str):
+def update_callbacks(cache: Optional[Cache], app, definitions: Properties, human_players: List[str], bank: str):
     @app.callback(
         Output('game-state', 'data'),
         [
@@ -188,7 +189,7 @@ def update_callbacks(app, definitions: Properties, human_players: List[str], ban
         if not data:
             raise PreventUpdate
 
-        game_state = Game.from_json(data)
+        game_state = Game.from_cache(cache, data)
 
         triggers = [t['prop_id'] for t in dash.callback_context.triggered]
 
@@ -224,11 +225,11 @@ def update_callbacks(app, definitions: Properties, human_players: List[str], ban
                 msg = pay_rent(game, definitions, rent_player, rent_property, rent_dice)
             else:
                 # this is the first time when all n_clicks are 0
-                return game_state.to_json()
+                return game_state.to_cache(cache, data)
 
             if not msg:
                 raise PreventUpdate
 
             game_state.add_state(game, msg, definitions)
 
-        return game_state.to_json()
+        return game_state.to_cache(cache, data)
