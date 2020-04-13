@@ -4,6 +4,7 @@ from random import randint
 import dash
 import dash_bootstrap_components as dbc
 import flask
+from flask_caching import Cache
 
 from monopoly.init import populate_game
 
@@ -17,9 +18,8 @@ CACHE_CONFIG = {
     'CACHE_THRESHOLD': 10,
 }
 
-# cache = Cache()
-# cache.init_app(the_app.server, config=CACHE_CONFIG)
-cache = None
+cache = Cache()
+cache.init_app(app.server, config=CACHE_CONFIG)
 
 populate_game(app, cache)
 
