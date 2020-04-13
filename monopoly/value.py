@@ -1,6 +1,6 @@
 from typing import Dict
 
-from properties import Properties
+from monopoly.properties import Properties
 
 
 def get_player_total_value(player_data: Dict, definitions: Properties) -> int:

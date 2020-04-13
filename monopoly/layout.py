@@ -5,8 +5,8 @@ import dash_core_components as dcc
 import dash_html_components as html
 from flask_caching import Cache
 
-from game import Game
-from properties import Properties
+from monopoly.game import Game
+from monopoly.properties import Properties
 
 EMPTY_SELECT = [{'label': ''}]
 

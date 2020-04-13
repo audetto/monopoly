@@ -6,8 +6,8 @@ from dash.dependencies import Output, Input, State
 from dash.exceptions import PreventUpdate
 from flask_caching import Cache
 
-from game import Game
-from properties import Properties
+from monopoly.game import Game
+from monopoly.properties import Properties
 
 
 def pay(game: Dict, human_players: List[str],

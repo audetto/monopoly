@@ -5,7 +5,6 @@ import pandas as pd
 
 
 class Properties:
-
     FOREGROUND = {'Brown': 'white', 'Dark Blue': 'white'}
     HOUSES = ['1 house', '2 houses', '3 houses', '4 houses', 'hotel']
     STATION_RENT = [1, 2, 4, 8]
@@ -24,18 +23,18 @@ class Properties:
         background = group.replace(' ', '')
         foreground = self.FOREGROUND.get(group, 'black')
         style = {'background-color': background, 'color': foreground}
-    
+
         if data[prop]['mortgage']:
             style['opacity'] = 0.2
-    
+
         return style
-    
+
     def get_tradable_properties(self, player_data: Dict) -> Dict:
         # can only sell or mortgage properties with no houses
         built_groups = {self.data[k]['color'] for k, v in player_data['properties'].items() if v['houses'] > 0}
         properties = {k: v for k, v in player_data['properties'].items() if self.data[k]['color'] not in built_groups}
         return properties
-    
+
     def get_buildable_properties(self, player_data: Dict) -> Dict:
         owned = {}
         for prop, prop_data in player_data['properties'].items():
@@ -52,7 +51,7 @@ class Properties:
         # can only sell or mortgage properties with no houses
         properties = {k: v for k, v in player_data['properties'].items() if self.data[k]['color'] in buildable_groups}
         return properties
-    
+
     def get_property_value(self, prop: str, player_data: Dict) -> int:
         is_mortgaged = player_data['properties'][prop]['mortgage']
         price = self.data[prop]['price']
@@ -60,11 +59,11 @@ class Properties:
             # deduct interests
             price = price * 45 // 100
         return int(price)
-    
+
     def get_redemption_cost(self, prop: str) -> int:
         value = self.data[prop]['price'] * 11 // 20
         return int(value)
-    
+
     def get_mortgage_value(self, prop: str) -> int:
         value = self.data[prop]['price'] // 2
         return int(value)
@@ -76,6 +75,7 @@ class Properties:
     def get_sorted_properties(self, properties: Dict) -> List[str]:
         def value(prop: str) -> int:
             return self.data[prop]['price']
+
         s = sorted(properties.keys(), key=value)
         return s
 

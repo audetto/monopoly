@@ -4,8 +4,8 @@ from typing import List, Dict, Tuple, Optional
 
 from flask_caching import Cache
 
-from properties import Properties
-from value import get_player_total_value
+from monopoly.properties import Properties
+from monopoly.value import get_player_total_value
 
 
 class Game:

@@ -8,9 +8,9 @@ from dash.exceptions import PreventUpdate
 from flask_caching import Cache
 from plotly.subplots import make_subplots
 
-from game import Game
-from layout import EMPTY_SELECT
-from properties import Properties
+from monopoly.game import Game
+from monopoly.layout import EMPTY_SELECT
+from monopoly.properties import Properties
 
 
 def get_options_for_player_properties(properties: Dict, definitions: Properties) -> List[Dict]:
