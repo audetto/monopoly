@@ -1,6 +1,10 @@
 dash
 dash-bootstrap-components
-flask-caching
-pandas
+dash-core-components
+dash-renderer
+dash-html-components
 flask
-
+flask-caching
+gunicorn
+pandas
+plotly
