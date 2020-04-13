@@ -9,8 +9,8 @@ from monopoly.update import update_callbacks
 
 
 def populate_game(app, cache: Optional[Cache]):
-    human_players = ['Amelie', 'Sofia', 'Andrea']
-    bank = 'Bank'
+    human_players = ['Amsi', 'Ofi', 'Pappo']
+    bank = 'Mafia'
     property_definitions = Properties()
 
     app.title = 'Monopoly'
